@@ -1,6 +1,15 @@
 <script>
 export default {
+  emits: ["editEvent", "deleteEvent"],
   props: ["id", "name", "email", "phone"],
+  methods: {
+    edit() {
+      this.$emit("editEvent", this.id);
+    },
+    remove() {
+      this.$emit("deleteEvent", this.id);
+    },
+  },
 };
 </script>
 
@@ -11,10 +20,10 @@ export default {
     <div class="item">{{ email }}</div>
     <div class="item">{{ phone }}</div>
     <div class="buttons">
-      <button>
+      <button @click="edit">
         <v-icon size="large" color="grey-lighten-1" icon="mdi-pencil"></v-icon>
       </button>
-      <button>
+      <button @click="remove">
         <v-icon
           size="large"
           color="grey-lighten-1"

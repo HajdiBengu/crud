@@ -13,7 +13,12 @@ export default {
       creatingUser: false,
     };
   },
-  emits: ["createButton"],
+  emits: ["createButton", "editEvent"],
+  watch: {
+    users(newUsers) {
+      this.users = newUsers;
+    },
+  },
   async mounted() {
     try {
       const res = await axios.get("https://jsonplaceholder.typicode.com/users");
@@ -26,6 +31,19 @@ export default {
   methods: {
     create() {
       this.$emit("createButton");
+    },
+    edit(id) {
+      this.$emit("editEvent", id);
+    },
+    async remove(id) {
+      try {
+        const res = await axios.delete(
+          `https://jsonplaceholder.typicode.com/users/${id}`
+        );
+        console.log(res.data);
+      } catch (error) {
+        console.error(error);
+      }
     },
   },
 };
@@ -48,6 +66,8 @@ export default {
       :name="user.name"
       :email="user.email"
       :phone="user.phone"
+      @editEvent="edit"
+      @deleteEvent="remove"
     ></UserRow>
   </div>
 </template>

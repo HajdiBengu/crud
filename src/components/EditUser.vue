@@ -3,6 +3,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      loading: true,
       checkbox: false,
       fname: "",
       address: "",
@@ -33,25 +34,35 @@ export default {
           return "You must enter a valid email.";
         },
       ],
-      phoneRules: [
+      zipRules: [
         (v) =>
           !v ||
-          /^(\+[1-9]{1}[0-9]{3,14})?([0-9]{8,14})$/.test(v) ||
-          "Please enter a valid international phone number",
-      ],
-      zipRules: [
-        (v) => {
-          if (v.length === 5) return true;
-          return "Zipcode must be 5 digits.";
-        },
-        (v) => {
-          if (Number(v)) return true;
-          return "Please enter a valid zipcode";
-        },
+          /(^\d{5}$)|(^\d{5}-\d{4}$)/.test(v) ||
+          "Zipcode must be 5 digits.",
       ],
     };
   },
+  props: ["id"],
   emits: ["close"],
+  async mounted() {
+    try {
+      const res = await axios.get(
+        `https://jsonplaceholder.typicode.com/users/${this.id}`
+      );
+      this.fname = res.data.name;
+      this.username = res.data.username;
+      this.city = res.data.address.city;
+      this.email = res.data.email;
+      this.zip = res.data.address.zipcode;
+      this.phone = res.data.phone;
+      this.lat = res.data.address.geo.lat;
+      this.lon = res.data.address.geo.lng;
+      this.address = `${res.data.address.suite}, ${res.data.address.street}`;
+      this.loading = false;
+    } catch (error) {
+      console.error(error);
+    }
+  },
   methods: {
     closeModal() {
       this.$emit("close");
@@ -88,7 +99,7 @@ export default {
 <template>
   <div class="backdrop" @click.self="closeModal">
     <div class="modal">
-      <v-form class="px-3" validate-on="input submit" @submit.prevent="submit">
+      <v-form class="px-3">
         <v-checkbox v-model="checkbox" label="Use Google Location"></v-checkbox>
         <v-text-field label="Full Name" v-model="fname" :rules="nameRules">
         </v-text-field>
@@ -99,14 +110,13 @@ export default {
         </v-text-field>
         <v-text-field label="Zip Code" v-model="zip" :rules="zipRules">
         </v-text-field>
-        <v-text-field label="Phone Nr" v-model="phone" :rules="phoneRules">
-        </v-text-field>
+        <v-text-field label="Phone Nr" v-model="phone"> </v-text-field>
         <div v-if="checkbox">
           <v-text-field label="Latitude" v-model="lat"> </v-text-field>
           <v-text-field label="Longitude" v-model="lon"> </v-text-field>
         </div>
 
-        <v-btn flat type="submit" text="Save"></v-btn>
+        <v-btn flat @click.prevent="submit">Save</v-btn>
       </v-form>
     </div>
   </div>
