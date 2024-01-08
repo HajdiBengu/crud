@@ -9,6 +9,7 @@ export default {
     CreateUser,
     EditUser,
   },
+
   data() {
     return {
       creatingUser: false,
@@ -16,10 +17,12 @@ export default {
       id: "",
     };
   },
+
   methods: {
     toggleModal() {
       this.creatingUser = !this.creatingUser;
     },
+
     toggleEdit(id) {
       this.id = id;
       this.editingUser = !this.editingUser;
@@ -30,9 +33,11 @@ export default {
 
 <template>
   <UsersTable @createButton="toggleModal" @editEvent="toggleEdit" />
+
   <div v-if="creatingUser">
     <CreateUser @close="toggleModal" />
   </div>
+
   <div v-if="editingUser">
     <EditUser @close="toggleEdit" :id="this.id" />
   </div>

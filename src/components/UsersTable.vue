@@ -13,12 +13,15 @@ export default {
       creatingUser: false,
     };
   },
+
   emits: ["createButton", "editEvent"],
+
   watch: {
     users(newUsers) {
       this.users = newUsers;
     },
   },
+
   async mounted() {
     try {
       const res = await axios.get("https://jsonplaceholder.typicode.com/users");
@@ -28,13 +31,16 @@ export default {
       console.error(error);
     }
   },
+
   methods: {
     create() {
       this.$emit("createButton");
     },
+
     edit(id) {
       this.$emit("editEvent", id);
     },
+
     async remove(id) {
       try {
         const res = await axios.delete(
@@ -51,6 +57,7 @@ export default {
 
 <template>
   <div v-if="loading">Loading...</div>
+
   <div v-else class="table">
     <div id="buttonContainer">
       <button @click="create" class="createButton">
@@ -58,7 +65,9 @@ export default {
         User
       </button>
     </div>
+
     <TableHeader />
+
     <UserRow
       v-for="user in users"
       :key="user.id"
